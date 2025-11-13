@@ -19,6 +19,7 @@ export type Market = {
 export type SortKey = 'price' | 'change_24h' | 'volume_24h'
 export type QuoteFilter = 'ALL' | 'USDT' | 'TMN'
 export type Resolution = '60' | '240' | 'D' | 'W'
+export type DateRange = 'today' | 'week' | 'month' | '3months' | '6months' | 'year' | 'custom'
 
 type State = {
   markets: Market[]
@@ -29,6 +30,9 @@ type State = {
   quoteFilter: QuoteFilter
   selected: string[]
   resolution: Resolution
+  dateRange: DateRange
+  dateFrom: number
+  dateTo: number
 }
 
 type Actions = {
@@ -40,6 +44,7 @@ type Actions = {
   toggleSelected: (symbol: string) => void
   clearSelected: () => void
   setResolution: (r: Resolution) => void
+  setDateRange: (range: DateRange, from?: number, to?: number) => void
 }
 
 export const useMarketStore = create<State & Actions>((set, get) => ({
@@ -51,6 +56,9 @@ export const useMarketStore = create<State & Actions>((set, get) => ({
   quoteFilter: 'USDT',
   selected: ['SOLUSDT', 'BTCUSDT'],
   resolution: 'D',
+  dateRange: 'month',
+  dateFrom: Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60), // 30 days ago
+  dateTo: Math.floor(Date.now() / 1000), // now
   async fetchMarkets() {
     set({ loading: true })
     const res = await fetch('/api/markets')
@@ -96,4 +104,38 @@ export const useMarketStore = create<State & Actions>((set, get) => ({
   },
   clearSelected() { set({ selected: [] }) },
   setResolution(r) { set({ resolution: r }) },
+  setDateRange(range, from, to) {
+    if (range === 'custom' && from && to) {
+      set({ dateRange: range, dateFrom: from, dateTo: to })
+    } else {
+      // Calculate dates based on preset ranges
+      const now = Math.floor(Date.now() / 1000)
+      let fromTimestamp: number
+      
+      switch (range) {
+        case 'today':
+          fromTimestamp = now - (24 * 60 * 60) // 1 day
+          break
+        case 'week':
+          fromTimestamp = now - (7 * 24 * 60 * 60) // 7 days
+          break
+        case 'month':
+          fromTimestamp = now - (30 * 24 * 60 * 60) // 30 days
+          break
+        case '3months':
+          fromTimestamp = now - (90 * 24 * 60 * 60) // 90 days
+          break
+        case '6months':
+          fromTimestamp = now - (180 * 24 * 60 * 60) // 180 days
+          break
+        case 'year':
+          fromTimestamp = now - (365 * 24 * 60 * 60) // 365 days
+          break
+        default:
+          fromTimestamp = now - (30 * 24 * 60 * 60) // default to 30 days
+      }
+      
+      set({ dateRange: range, dateFrom: fromTimestamp, dateTo: now })
+    }
+  },
 }))

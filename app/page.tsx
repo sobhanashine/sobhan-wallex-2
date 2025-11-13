@@ -15,6 +15,7 @@ import { formatNumber } from "@/lib/utils"
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { DateFilter, DateRange } from '@/components/ui/date-filter'
 
 export default function Home() {
   const {
@@ -26,6 +27,7 @@ export default function Home() {
     quoteFilter,
     selected,
     resolution,
+    dateRange,
     fetchMarkets,
     setSearch,
     setSort,
@@ -34,6 +36,7 @@ export default function Home() {
     toggleSelected,
     clearSelected,
     setResolution,
+    setDateRange,
   } = useMarketStore()
 
   const [open, setOpen] = React.useState(false)
@@ -199,6 +202,11 @@ export default function Home() {
                       ))}
                     </TabsList>
                   </Tabs>
+                  <DateFilter 
+                    value={dateRange} 
+                    onChange={(range, from, to) => setDateRange(range, from, to)}
+                    className="w-40"
+                  />
                 </div>
               </CardHeader>
               <CardContent className="p-0">

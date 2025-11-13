@@ -15,7 +15,7 @@ interface CandlestickData {
 }
 
 export function ApexChart() {
-  const { selected, resolution } = useMarketStore()
+  const { selected, resolution, dateFrom, dateTo } = useMarketStore()
   const [loading, setLoading] = React.useState(false)
   const [series, setSeries] = React.useState<any[]>([])
 
@@ -28,12 +28,9 @@ export function ApexChart() {
     const loadData = async () => {
       setLoading(true)
       try {
-        const now = Math.floor(Date.now() / 1000)
-        const from = now - 60 * 60 * 24 * 30
-        
         const newSeries = await Promise.all(
           selected.map(async (symbol, index) => {
-            const res = await fetch(`/api/candles?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${now}`)
+            const res = await fetch(`/api/candles?symbol=${symbol}&resolution=${resolution}&from=${dateFrom}&to=${dateTo}`)
             const data = await res.json()
             
             if (!data.t || !data.o || !data.h || !data.l || !data.c || data.s !== 'ok') {
@@ -62,7 +59,7 @@ export function ApexChart() {
     }
 
     loadData()
-  }, [selected, resolution])
+  }, [selected, resolution, dateFrom, dateTo])
 
   if (selected.length === 0) {
     return (
