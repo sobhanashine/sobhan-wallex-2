@@ -3,9 +3,6 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["fra1"],
-  "env": {
-    "WALLEX_API_KEY": "@wallex-api-key"
-  },
   "functions": {
     "app/api/**/*.ts": {
       "maxDuration": 30

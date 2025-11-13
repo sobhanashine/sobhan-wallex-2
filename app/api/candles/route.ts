@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const from = url.searchParams.get('from')
   const to = url.searchParams.get('to')
   if (!symbol || !from || !to) return NextResponse.json({ error: 'params' }, { status: 400 })
-  const key = process.env.WALLEX_API_KEY
+  const key = '17108|2vBxYCn3sc96JsAO9HeNA0sh5fMX8iEOe98sCzw3'
   const qs = new URLSearchParams({ symbol, resolution, from, to })
   const res = await fetch(`https://api.wallex.ir/v1/udf/history?${qs}`, {
     headers: key ? { 'x-api-key': key } : {}
