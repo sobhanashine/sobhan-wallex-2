@@ -13,3 +13,4 @@ export async function GET() {
   const markets = data?.result?.markets || []
   return NextResponse.json({ markets })
 }
+// todo
